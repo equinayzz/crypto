@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1, h2 {
+            color: #333;
+        }
+        
+        form {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            font-weight: bold;
+        }
+        
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+        
+        .result h2 {
+            margin-top: 0;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Crypto API</h1>
+    <h2>Encryption</h2>
+    <form id="encrypt-form">
+        <label for="text-to-encrypt">Enter text to encrypt:</label><br>
+        <textarea id="text-to-encrypt" name="text-to-encrypt" rows="4" cols="50"></textarea><br>
+        <button type="button" onclick="encrypt()">Encrypt</button>
+    </form>
+    <h2>Decryption</h2>
+    <form id="decrypt-form">
+        <label for="encrypted-text">Enter encrypted text:</label><br>
+        <textarea id="encrypted-text" name="encrypted-text" rows="4" cols="50"></textarea><br>
+        <label for="encryption-key">Enter encryption key:</label><br>
+        <input type="text" id="encryption-key" name="encryption-key"><br>
+        <button type="button" onclick="decrypt()">Decrypt</button>
+    </form>
+    <h2>Results</h2>
+    <div id="result"></div>
+
+    <script>
+        function encrypt() {
+            var text = document.getElementById("text-to-encrypt").value;
+            fetch("/encrypt", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    text: text
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerText = "Encrypted Text: " + data.encrypted_text + "\nEncryption Key: " + data.key;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        function decrypt() {
+            var encryptedText = document.getElementById("encrypted-text").value;
+            var key = document.getElementById("encryption-key").value;
+            fetch("/decrypt", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    encrypted_text: encryptedText,
+                    key: key
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerText = "Decrypted Text: " + data.decrypted_text;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
